@@ -25,13 +25,17 @@ BuildRequires:  python-zope-interface
 BuildRequires:  python-cryptography
 BuildRequires:  pyOpenSSL
 BuildRequires:  python-six
-
 BuildRequires:  python3-devel
 BuildRequires:  python3-libs
 BuildRequires:  python3-incremental
 BuildRequires:  python3-zope-interface
 BuildRequires:  python3-setuptools
 BuildRequires:  python3-xml
+%if %{with_check}
+BuildRequires:  net-tools
+BuildRequires:  shadow-utils
+BuildRequires:  sudo
+%endif
 Requires:       python2
 Requires:       python2-libs
 Requires:       python-zope-interface
@@ -89,15 +93,15 @@ python2 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 %check
 easy_install_2=$(ls /usr/bin |grep easy_install |grep 2)
 route add -net 224.0.0.0 netmask 240.0.0.0 dev lo
-$easy_install_2 pip
-pip install --upgrade tox
+$easy_install_2 pip==20.3.4
+pip2 install --upgrade tox
 chmod g+w . -R
 useradd test -G root -m
 LANG=en_US.UTF-8 sudo -u test tox -e py27-tests
 pushd ../p3dir
 easy_install_3=$(ls /usr/bin |grep easy_install |grep 3)
 $easy_install_3 pip
-pip install --upgrade tox
+pip3 install --upgrade tox
 chmod g+w . -R
 LANG=en_US.UTF-8 sudo -u test tox -e py36-tests
 popd
