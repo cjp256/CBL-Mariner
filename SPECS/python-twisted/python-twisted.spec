@@ -94,16 +94,17 @@ python2 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 easy_install_2=$(ls /usr/bin |grep easy_install |grep 2)
 route add -net 224.0.0.0 netmask 240.0.0.0 dev lo
 $easy_install_2 pip==20.3.4
-pip2 install --upgrade tox
+pip install --upgrade tox
 chmod g+w . -R
 useradd test -G root -m
-LANG=en_US.UTF-8 sudo -u test tox -e py27-tests
+LANG=en_US.UTF-8 sudo -u test tox -e py27-alldeps-nocov,
 pushd ../p3dir
 easy_install_3=$(ls /usr/bin |grep easy_install |grep 3)
 $easy_install_3 pip
 pip3 install --upgrade tox
 chmod g+w . -R
-LANG=en_US.UTF-8 sudo -u test tox -e py36-tests
+LANG=en_US.UTF-8 sudo -u test tox -e py36-alldeps-nocov
+LANG=en_US.UTF-8 sudo -u test tox -e py37-alldeps-nocov
 popd
 
 %files
