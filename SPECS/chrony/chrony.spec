@@ -4,7 +4,7 @@
 
 Name:           chrony
 Version:        4.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        An NTP client/server
 Vendor:         Microsoft Corporation
 Distribution:   Mariner
@@ -79,10 +79,14 @@ EOF
 # - use Windows NTP server (time.windows.com) instead of a pool
 # - enable leapsectz to get TAI-UTC offset and leap seconds from tzdata
 # - enable keyfile
+# - enable virtual PHC
 sed -e 's|^pool.*|server time.windows.com|' \
     -e 's|#\(leapsectz\)|\1|' \
     -e 's|#\(keyfile\)|\1|' \
         < examples/chrony.conf.example2 > chrony.conf
+
+echo -e "\n# Enable virtual PTP clock source." >> chrony.conf
+echo -e "refclock PHC /dev/ptp_hyperv poll 3 dpoll -2 offset 0" >> chrony.conf
 
 # use the example chrony-wait service, but comment out the line adding
 # chrony-wait as a boot dependency
@@ -206,6 +210,9 @@ systemctl start chronyd.service
 %dir %attr(-,chrony,chrony) %{_localstatedir}/log/chrony
 
 %changelog
+* Fri Jul 29 2022 Chris Patterson <cpatterson@microsoft.com> - 4.1-2
+- Enable virtual PHC configuration
+
 * Mon Mar 07 2022 Andrew Phelps <anphel@microsoft.com> - 4.1-1
 - Upgrade to version 4.1
 
